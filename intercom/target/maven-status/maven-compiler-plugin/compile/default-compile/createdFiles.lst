@@ -6,6 +6,5 @@ org\intercom\dao\StoredProcedureDao.class
 org\intercom\init\SpringMvcInitializer.class
 org\intercom\utils\IntercomUtils.class
 org\intercom\constants\IntercomConstants.class
-org\intercom\controller\IntercomStoredPeocedureController.class
 org\intercom\test\TestDao.class
 org\intercom\init\RootConfiguration.class
