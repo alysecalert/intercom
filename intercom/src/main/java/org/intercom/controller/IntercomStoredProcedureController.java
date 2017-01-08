@@ -41,7 +41,22 @@ public class IntercomStoredProcedureController {
 			JSONObject inputJson = new JSONObject(input);
 			String user= inputJson.getString("userId");
 			String imei = inputJson.getString("imei");
-			return StoredProcedureServices.getInstances().getApt(user,imei);
+			String password = inputJson.getString("password");
+			return StoredProcedureServices.getInstances().getApt(user,imei,password);
+		} catch (JSONException e) {
+			return IntercomUtils.getFailureResponse("No proper input!");
+		}
+	}
+	@RequestMapping(value = "getAptPlan", method = RequestMethod.POST)
+	private @ResponseBody String getAptPlan(@RequestBody String input)
+	{
+		IntercomUtils.printInfo("getApt API Called");
+		try {
+			JSONObject inputJson = new JSONObject(input);
+			String user= inputJson.getString("userId");
+			String imei = inputJson.getString("imei");
+			String password = inputJson.getString("password");
+			return StoredProcedureServices.getInstances().getAptPlan(user,imei,password);
 		} catch (JSONException e) {
 			return IntercomUtils.getFailureResponse("No proper input!");
 		}

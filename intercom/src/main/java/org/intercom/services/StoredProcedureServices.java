@@ -24,7 +24,7 @@ public class StoredProcedureServices implements IntercomConstants{
 	public String getMasterDelta()
 	{
     	Object[] procedureParams = {"ccvoa-560064","9845678900"}; 
-		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure");
+		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure get master delta");
 		String syncTime = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_LAST_SYNC_TIME, procedureParams);
 		if(!syncTime.isEmpty())
 		{
@@ -47,12 +47,22 @@ public class StoredProcedureServices implements IntercomConstants{
 			return "";
 		}
 	}
-	public String getApt(String userId, String imei)
+	public String getApt(String userId, String imei,String password)
 	{
-    	Object[] procedureParams = {userId,imei}; 
-		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure");
+    	Object[] procedureParams = {userId,imei,password}; 
+		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for get Apt");
 		String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
 		IntercomUtils.printInfo("Final response of getAPt : "+response);
+		return IntercomUtils.getSuccessResponse(response);
+	}
+	public String getAptPlan(String userId, String imei,String password)
+	{
+    	Object[] procedureParams = {userId,imei,password}; 
+		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for Get apt plan");
+		String aptName = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
+		Object[] procedureParams2 = {aptName};
+		String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT_PLAN, procedureParams2);
+		IntercomUtils.printInfo("Final response of getAptPlan : "+response);
 		return IntercomUtils.getSuccessResponse(response);
 	}
 }
