@@ -40,9 +40,8 @@ public class IntercomStoredProcedureController {
 		try {
 			JSONObject inputJson = new JSONObject(input);
 			String user= inputJson.getString("userId");
-			String imei = inputJson.getString("imei");
 			String password = inputJson.getString("password");
-			return StoredProcedureServices.getInstances().getApt(user,imei,password);
+			return StoredProcedureServices.getInstances().getApt(user,password);
 		} catch (JSONException e) {
 			return IntercomUtils.getFailureResponse("No proper input!");
 		}
@@ -54,9 +53,8 @@ public class IntercomStoredProcedureController {
 		try {
 			JSONObject inputJson = new JSONObject(input);
 			String user= inputJson.getString("userId");
-			String imei = inputJson.getString("imei");
 			String password = inputJson.getString("password");
-			return StoredProcedureServices.getInstances().getAptPlan(user,imei,password);
+			return StoredProcedureServices.getInstances().getAptPlan(user,password);
 		} catch (JSONException e) {
 			return IntercomUtils.getFailureResponse("No proper input!");
 		}

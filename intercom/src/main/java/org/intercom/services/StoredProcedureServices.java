@@ -2,6 +2,7 @@ package org.intercom.services;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.intercom.constants.IntercomConstants;
 import org.intercom.dao.StoredProcedureDao;
 import org.intercom.utils.IntercomUtils;
@@ -47,22 +48,38 @@ public class StoredProcedureServices implements IntercomConstants{
 			return "";
 		}
 	}
-	public String getApt(String userId, String imei,String password)
+	public String getApt(String userId,String password)
 	{
-    	Object[] procedureParams = {userId,imei,password}; 
+    	Object[] procedureParams = {userId,password}; 
 		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for get Apt");
 		String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
 		IntercomUtils.printInfo("Final response of getAPt : "+response);
-		return IntercomUtils.getSuccessResponse(response);
+		try {
+			response = response.replace("\\\"", "\"");
+			return IntercomUtils.getSuccessResponse(new JSONArray(response));
+		} catch (JSONException e) {
+			IntercomUtils.printError("Error creating JSON", e);
+			return IntercomUtils.getFailureResponse("Exception occured");
+		}
 	}
-	public String getAptPlan(String userId, String imei,String password)
+	public String getAptPlan(String userId,String password)
 	{
-    	Object[] procedureParams = {userId,imei,password}; 
-		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for Get apt plan");
-		String aptName = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
-		Object[] procedureParams2 = {aptName};
-		String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT_PLAN, procedureParams2);
-		IntercomUtils.printInfo("Final response of getAptPlan : "+response);
-		return IntercomUtils.getSuccessResponse(response);
+		try
+		{
+	    	Object[] procedureParams = {userId,password}; 
+			IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for Get apt plan");
+			String aptName = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
+			aptName = aptName.replace("\\\"", "\"");
+			JSONArray aptNameArray = new JSONArray(aptName);
+			aptName = aptNameArray.getString(0);
+			Object[] procedureParams2 = {aptName};
+			String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT_PLAN, procedureParams2);
+			response = response.replace("\\\"", "\"");
+			IntercomUtils.printInfo("Final response of getAptPlan : "+response);
+			return IntercomUtils.getSuccessResponse(new JSONArray(response));
+		} catch (JSONException e) {
+			IntercomUtils.printError("Error creating JSON", e);
+			return IntercomUtils.getFailureResponse("Exception occured");
+		}
 	}
 }
