@@ -47,4 +47,12 @@ public class StoredProcedureServices implements IntercomConstants{
 			return "";
 		}
 	}
+	public String getApt(String userId, String imei)
+	{
+    	Object[] procedureParams = {userId,imei}; 
+		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure");
+		String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
+		IntercomUtils.printInfo("Final response of getAPt : "+response);
+		return IntercomUtils.getSuccessResponse(response);
+	}
 }
