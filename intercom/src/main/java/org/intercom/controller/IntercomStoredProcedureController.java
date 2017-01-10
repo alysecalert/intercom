@@ -21,11 +21,18 @@ public class IntercomStoredProcedureController implements IntercomConstants{
 		return "login";
 	}
 	
-	@RequestMapping(value = GET_MASTER_DELTA, method = RequestMethod.GET)
-	private @ResponseBody String getTest() throws JSONException
+	@RequestMapping(value = GET_MASTER_DELTA_API, method = RequestMethod.POST)
+	private @ResponseBody String getMasterDelta(@RequestBody String input)
 	{
-		IntercomUtils.printInfo(GET_MASTER_DELTA+" API Called");
-		return StoredProcedureServices.getInstances().getMasterDelta();
+		IntercomUtils.printInfo(GET_MASTER_DELTA_API+" API Called");
+		try {
+			JSONObject inputJson = new JSONObject(input);
+			String user= inputJson.getString("userId");
+			String password = inputJson.getString("password");
+			return StoredProcedureServices.getInstances().getMasterDelta(user,password);
+		} catch (JSONException e) {
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
+		}
 	}
 	
 	@RequestMapping(value = {"getUpdatePage"}, method = RequestMethod.GET)

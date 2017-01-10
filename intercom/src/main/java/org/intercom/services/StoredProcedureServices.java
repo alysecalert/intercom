@@ -2,6 +2,7 @@ package org.intercom.services;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.intercom.constants.IntercomConstants;
 import org.intercom.dao.StoredProcedureDao;
 import org.intercom.utils.IntercomUtils;
@@ -21,25 +22,30 @@ public class StoredProcedureServices implements IntercomConstants{
 		return storedProcedureServices;
 	}
 	
-	public String getMasterDelta()
+	public String getMasterDelta(String userId,String password)
 	{
-    	Object[] procedureParams = {"ccvoa-560064","9845678900"}; 
-		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure get master delta");
-		String syncTime = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_LAST_SYNC_TIME, procedureParams);
-		if(!syncTime.isEmpty())
-		{
-			try {
-				syncTime = new JSONArray(syncTime).getString(0);
-			} catch (JSONException e) {
-				IntercomUtils.printError("Error parsing sync time array ", e);
-			}
-		}
-		IntercomUtils.printInfo("syncTime "+syncTime);
-		Object[] procedureParams2 = {"ccvoa-560064",syncTime};
-		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure");
-		String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_MASTER_DELTA, procedureParams2);
-		IntercomUtils.printInfo("Final response of getMaster delta: "+response);
 		try {
+			IntercomUtils.printInfo("getMasterDelta");
+			JSONObject aptResponseJson = new JSONObject(getApt(userId, password));
+			JSONArray aptData = aptResponseJson.getJSONArray("data");
+			String aptName = aptData.getString(0);
+			IntercomUtils.printInfo("got aptName "+aptName);
+			Object[] procedureParams = {aptName,userId}; 
+			IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure get master delta");
+			String syncTime = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_LAST_SYNC_TIME, procedureParams);
+			if(!syncTime.isEmpty())
+			{
+				try {
+					syncTime = new JSONArray(syncTime).getString(0);
+				} catch (JSONException e) {
+					IntercomUtils.printError("Error parsing sync time array ", e);
+				}
+			}
+			IntercomUtils.printInfo("syncTime "+syncTime);
+			Object[] procedureParams2 = {aptName,syncTime};
+			IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure");
+			String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_MASTER_DELTA, procedureParams2);
+			IntercomUtils.printInfo("Final response of getMaster delta: "+response);
 			response = response.replace("\\\"", "\"");
 			return IntercomUtils.getSuccessResponse(new JSONArray(response));
 		} catch (JSONException e) {
@@ -53,8 +59,8 @@ public class StoredProcedureServices implements IntercomConstants{
 		IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for get Apt");
 		String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
 		IntercomUtils.printInfo("Final response of getAPt : "+response);
+		response = response.replace("\\\"", "\"");
 		try {
-			response = response.replace("\\\"", "\"");
 			return IntercomUtils.getSuccessResponse(new JSONArray(response));
 		} catch (JSONException e) {
 			IntercomUtils.printError("Error creating JSON", e);
@@ -65,12 +71,9 @@ public class StoredProcedureServices implements IntercomConstants{
 	{
 		try
 		{
-	    	Object[] procedureParams = {userId,password}; 
-			IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for Get apt plan");
-			String aptName = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT, procedureParams);
-			aptName = aptName.replace("\\\"", "\"");
-			JSONArray aptNameArray = new JSONArray(aptName);
-			aptName = aptNameArray.getString(0);
+			JSONObject aptResponseJson = new JSONObject(getApt(userId, password));
+			JSONArray aptData = aptResponseJson.getJSONArray("data");
+			String aptName = aptData.getString(0);
 			Object[] procedureParams2 = {aptName};
 			String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_APT_PLAN, procedureParams2);
 			response = response.replace("\\\"", "\"");
