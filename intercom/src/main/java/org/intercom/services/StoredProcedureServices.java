@@ -2,7 +2,6 @@ package org.intercom.services;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.intercom.constants.IntercomConstants;
 import org.intercom.dao.StoredProcedureDao;
 import org.intercom.utils.IntercomUtils;
@@ -45,7 +44,7 @@ public class StoredProcedureServices implements IntercomConstants{
 			return IntercomUtils.getSuccessResponse(new JSONArray(response));
 		} catch (JSONException e) {
 			IntercomUtils.printError("Error creating JSON", e);
-			return "";
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
 		}
 	}
 	public String getApt(String userId,String password)
@@ -59,7 +58,7 @@ public class StoredProcedureServices implements IntercomConstants{
 			return IntercomUtils.getSuccessResponse(new JSONArray(response));
 		} catch (JSONException e) {
 			IntercomUtils.printError("Error creating JSON", e);
-			return IntercomUtils.getFailureResponse("Exception occured");
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
 		}
 	}
 	public String getAptPlan(String userId,String password)
@@ -79,7 +78,37 @@ public class StoredProcedureServices implements IntercomConstants{
 			return IntercomUtils.getSuccessResponse(new JSONArray(response));
 		} catch (JSONException e) {
 			IntercomUtils.printError("Error creating JSON", e);
-			return IntercomUtils.getFailureResponse("Exception occured");
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
+		}
+	}
+	public String getSyncFreq(String userId,String password)
+	{
+		try
+		{
+	    	Object[] procedureParams = {userId,password}; 
+			IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for Get apt plan");
+			String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_SYNC_FREQ, procedureParams);
+			response = response.replace("\\\"", "\"");
+			IntercomUtils.printInfo("Final response of getSyncFreq : "+response);
+			return IntercomUtils.getSuccessResponse(new JSONArray(response));
+		} catch (Exception e) {
+			IntercomUtils.printError("Error creating JSON", e);
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
+		}
+	}
+	public String getFirstSyncOfDay(String userId,String password)
+	{
+		try
+		{
+	    	Object[] procedureParams = {userId,password}; 
+			IntercomUtils.printInfo("Calling "+storedProcedureServices+" StoredProcedure for Get apt plan");
+			String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(GET_FIRST_SYNC_OF_DAY, procedureParams);
+			response = response.replace("\\\"", "\"");
+			IntercomUtils.printInfo("Final response of getFirstSyncOfDay : "+response);
+			return IntercomUtils.getSuccessResponse(new JSONArray(response));
+		} catch (Exception e) {
+			IntercomUtils.printError("Error creating JSON", e);
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
 		}
 	}
 }
