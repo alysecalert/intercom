@@ -93,4 +93,31 @@ public class IntercomStoredProcedureController implements IntercomConstants{
 			return IntercomUtils.getFailureResponse(FAILURE_MSG);
 		}
 	}
+	@RequestMapping(value = GET_OTP_DELTA_API, method = RequestMethod.POST)
+	private @ResponseBody String getOtpDelta(@RequestBody String input)
+	{
+		IntercomUtils.printInfo(GET_OTP_DELTA_API+" API Called");
+		try {
+			JSONObject inputJson = new JSONObject(input);
+			String user= inputJson.getString("userId");
+			String password = inputJson.getString("password");
+			return StoredProcedureServices.getInstances().getOtpDelta(user,password);
+		} catch (JSONException e) {
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
+		}
+	}
+	@RequestMapping(value = POST_TRANS_LOG_API, method = RequestMethod.POST)
+	private @ResponseBody String postTransLog(@RequestBody String input)
+	{
+		IntercomUtils.printInfo(POST_TRANS_LOG_API+" API Called");
+		try {
+			JSONObject inputJson = new JSONObject(input);
+			String user= inputJson.getString("userId");
+			String password = inputJson.getString("password");
+			JSONObject docs = inputJson.getJSONObject("docs");
+			return StoredProcedureServices.getInstances().postTransLog(user,password,docs);
+		} catch (JSONException e) {
+			return IntercomUtils.getFailureResponse(FAILURE_MSG);
+		}
+	}
 }
