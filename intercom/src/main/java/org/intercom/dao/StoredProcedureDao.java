@@ -96,9 +96,14 @@ public class StoredProcedureDao {
     				new SqlQuerySpec("SELECT * FROM root r where r.id='" + stroredProcedureName + "'"), null).getQueryIterable().toList().get(0);
 			StoredProcedureResponse storedProcedureResponse = documentClient.executeStoredProcedure(sProc.getSelfLink(), procedureParams);
 			response = storedProcedureResponse.getResponseAsString();
-			response = response.substring(1, response.length()-1);
+			IntercomUtils.printInfo("Raw response of Storeprocedure: "+stroredProcedureName+" "+response);
+			if(response.length()>1)
+			{
+				response = response.substring(1, response.length()-1);
+			}
 		} catch (DocumentClientException e) {
 			IntercomUtils.printError("ERROR while fetching stored procedures", e);
+			response = e.getMessage();
 		}
     	return response;
 	}

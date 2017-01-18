@@ -1,5 +1,6 @@
 package org.intercom.controller;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.intercom.constants.IntercomConstants;
@@ -114,7 +115,7 @@ public class IntercomStoredProcedureController implements IntercomConstants{
 			JSONObject inputJson = new JSONObject(input);
 			String user= inputJson.getString("userId");
 			String password = inputJson.getString("password");
-			JSONObject docs = inputJson.getJSONObject("docs");
+			JSONArray docs = inputJson.getJSONArray("docs");
 			return StoredProcedureServices.getInstances().postTransLog(user,password,docs);
 		} catch (JSONException e) {
 			return IntercomUtils.getFailureResponse(FAILURE_MSG);

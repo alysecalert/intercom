@@ -15,7 +15,7 @@ public class StoredProcedureServices implements IntercomConstants{
 	}
 	public static StoredProcedureServices getInstances()
 	{
-		if(storedProcedureServices == null)
+		if(storedProcedureServices == null)	
 		{
 			storedProcedureServices = new StoredProcedureServices();
 		}
@@ -145,7 +145,7 @@ public class StoredProcedureServices implements IntercomConstants{
 			return IntercomUtils.getFailureResponse(FAILURE_MSG);
 		}
 	}
-	public String postTransLog(String userId,String password,JSONObject docs)
+	public String postTransLog(String userId,String password,JSONArray docs)
 	{
 		try {
 			IntercomUtils.printInfo("postTransLog");
@@ -153,12 +153,19 @@ public class StoredProcedureServices implements IntercomConstants{
 			JSONArray aptData = aptResponseJson.getJSONArray("data");
 			String aptName = aptData.getString(0);
 			IntercomUtils.printInfo("got aptName "+aptName);
-			Object[] procedureParams2 = {docs};
+			org.json.JSONArray jsonArray =new org.json.JSONArray(docs.toString()); 
+			Object[] array = new Object[jsonArray.length()];
+			for(int i=0; i<jsonArray.length(); i++)
+			{
+				org.json.JSONObject jsonObject = jsonArray.getJSONObject(i);
+				array[i] = jsonObject.toString();
+			}
+			Object[] procedureParams2 = {array};
 			IntercomUtils.printInfo("Calling "+BULK_IMPORT+" StoredProcedure");
 			String response = StoredProcedureDao.getInstances().getResponseOfStoredProcedure(BULK_IMPORT, procedureParams2);
-			IntercomUtils.printInfo("Final response of getMaster delta: "+response);
+			IntercomUtils.printInfo("Final response of bulkimport delta: "+response);
 			response = response.replace("\\\"", "\"");
-			return IntercomUtils.getSuccessResponse(new JSONArray(response));
+			return IntercomUtils.getSuccessResponse(response);
 		} catch (JSONException e) {
 			IntercomUtils.printError("Error creating JSON", e);
 			return IntercomUtils.getFailureResponse(FAILURE_MSG);
